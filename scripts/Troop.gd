@@ -1,3 +1,5 @@
+## Troop.gd
+
 extends Node
 
 class_name Troop
@@ -11,7 +13,7 @@ var max_hp: int
 var armor: int ## reduces dmg taken
 ## For each entry in this dict -> attacker_type: dmg_multiplier
 var initial_dmg_resist: Dictionary = {}
-var grid_postion: Vector2i ##Grid coordinates, e.g., (x, y)
+var grid_position: Vector2i ##Grid coordinates, e.g., (x, y)
 var troop_type: String ## e.g. "Tank" "Knight" "infantry" ...
 
 ## Optional but might needed.. who knows

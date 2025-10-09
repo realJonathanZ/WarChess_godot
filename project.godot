@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="WarChessGame"
+run/main_scene="uid://bxmo0q0yysr88"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
