@@ -14,9 +14,9 @@ var tiles: Array = [] ## 2D Array of Tile instances, initialized after construct
 ## An W * H 2Darray
 ## The first indexing is along the horizental axis,
 ## and the second indexing is along the vertical axis(bottom to top)
-func  set_up_map(width: int, height: int):
-	self.width = width
-	self.height = height
+func  set_up_map(awidth: int, aheight: int):
+	self.width = awidth
+	self.height = aheight
 	self.tiles.resize(width) # Now we got index in (Array) tiles to be 0 to (width - 1)
 	for x in range(width):
 		self.tiles[x] = []
@@ -27,10 +27,10 @@ func  set_up_map(width: int, height: int):
 			
 ## set the tile object at the position (x, y)
 ##
-func set_tile(tile:Tile):
-	self.tiles[tile.position.x][tile.position.y] = tile
+func set_tile(atile:Tile):
+	self.tiles[atile.position.x][atile.position.y] = atile
 	
 ## get the tile object at postion(x, y)
 ##
-func get_tile(position: Vector2i) -> Tile:
-	return self.tiles[position.x][position.y]
+func get_tile(aposition: Vector2i) -> Tile:
+	return self.tiles[aposition.x][aposition.y]

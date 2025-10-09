@@ -14,7 +14,7 @@ var troop: Troop = null ## Is a specified troop occuping the tile?
 ## The wall and the abyss can have the infinite block_mobility
 var block_mobility: int = 1
 
-func _init(terrain_type: String, position: Vector2i):
-	self.terrain_type = terrain_type
-	self.position = position
+func _init(aterrain_type: String, aposition: Vector2i):
+	self.terrain_type = aterrain_type
+	self.position = aposition
 	

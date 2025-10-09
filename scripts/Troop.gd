@@ -21,15 +21,15 @@ var troop_type: String ## e.g. "Tank" "Knight" "infantry" ...
 var terrian_resist: Dictionary = {}
 
 ## =======Mthods===
-func _init(troop_name: String, max_hp: int, armor: int, 
-	grid_position: Vector2i, troop_type: String, initial_dmg_resist: Dictionary) -> void:
+func _init(atroop_name: String, amax_hp: int, aarmor: int, 
+	agrid_position: Vector2i, atroop_type: String, ainitial_dmg_resist: Dictionary) -> void:
 		
-	self.troop_name = troop_name
-	self.max_hp = max_hp
-	self.armor = armor
-	self.grid_position = grid_position
-	self.troop_type = troop_type
-	self.initial_dmg_resist = initial_dmg_resist 
+	self.troop_name = atroop_name
+	self.max_hp = amax_hp
+	self.armor = aarmor
+	self.grid_position = agrid_position
+	self.troop_type = atroop_type
+	self.initial_dmg_resist = ainitial_dmg_resist 
 
 ## calculate effective dmg based on armor and resistance
 ##
