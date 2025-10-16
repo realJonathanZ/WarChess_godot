@@ -1,6 +1,7 @@
 # TileMapManager.gd
 
-extends Node2D
+##NOTE: Changed this from extends Node2D to TileMapLayer so that we can use the built-in functions of TileMapLayer.
+extends TileMapLayer
 
 class_name TileMapManager
 
