@@ -26,13 +26,27 @@ func _ready():
 	## Godot does not support to call _init() in _ready(), it will crash
 	set_up_map(map_width, map_heigth) ## using set_up_map() declared inside super class, instead...
 	
+	#debug
+	print("-----From TileMapLayer 18x18-----")
+	
 	# create tiles object for every potion in the map
 	for x in range(width):
 		for y in range(height):
-			#make the tilemap place a tile at the (1st arg). Use tile from Tileset (2nd arg) at coords (3rd arg)
-			set_cell(Vector2(x,y), 0, terrain_dict["Plains"])
+			#Adding 3 types of tiles just to test that the custom properties actually load for each tile
+			if x > 3:
+				#make the tilemap place a tile at the (1st arg). Use tile from Tileset (2nd arg) at coords (3rd arg)
+				set_cell(Vector2(x,y), 0, terrain_dict["Sea"])
+			elif x < 2:
+				set_cell(Vector2(x,y), 0, terrain_dict["Road"])
+			else:
+				set_cell(Vector2(x,y), 0, terrain_dict["Plains"])
+			
+			#The tileset has custom properties (In the Tileset tab -> Paint -> Custom data)
 			# debug
-			print("Drawed tile at position:", Vector2(x,y))
+			print("Drawed tile at position:", Vector2(x,y), 
+			" | Terraint type: ",get_cell_tile_data(Vector2i(x, y)).get_custom_data("terrain_type"),
+			" | Block Mobility: ",get_cell_tile_data(Vector2i(x, y)).get_custom_data("block_mobility")
+			)
 	
 	# spawn two troops
 	spawn_test_troops()

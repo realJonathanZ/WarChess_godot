@@ -792,8 +792,6 @@ custom_data_layer_0/name = "terrain_type"
 custom_data_layer_0/type = 21
 custom_data_layer_1/name = "block_mobility"
 custom_data_layer_1/type = 2
-custom_data_layer_2/name = "troop"
-custom_data_layer_2/type = 0
 sources/0 = SubResource("TileSetAtlasSource_57l66")
 
 [node name="TestMapRoot" type="Node2D"]
