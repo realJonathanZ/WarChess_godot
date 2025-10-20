@@ -14,7 +14,7 @@ var terrain_dict = {
 	"Sea": Vector2(4,9)
 }
 
-var troop_list: Array[Troop]
+var occupied_spaces: Array [Vector2i] = []
 
 ##Exporting makes it so you can edit it in the editor (on the right side of screen)
 ##This makes it so we can reuse this script for any size as long as we set the two vars below.
@@ -54,10 +54,6 @@ func _ready():
 	spawn_test_troops()
 
 
-func update_troop_list(troop: Troop):
-	troop_list.append(troop)
-
-
 func spawn_test_troops():
 	var troop_scene: PackedScene = preload("res://scenes/Troop.tscn")
 	
@@ -76,9 +72,7 @@ func spawn_test_troops():
 	troop1.position = map_to_local(troop1.grid_position)
 	troop2.position = map_to_local(troop2.grid_position)
 	
-	##Might not need to keep a list of troops instead just troop_container.get_children() if we need them.
-	update_troop_list(troop1)
-	update_troop_list(troop2)
+	occupied_spaces.append(troop1.grid_position)
+	occupied_spaces.append(troop2.grid_position)
 	
-	for i in troop_list:
-		print(i.name, " ", i.grid_position)
+	print(occupied_spaces)
