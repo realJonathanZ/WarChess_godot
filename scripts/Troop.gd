@@ -1,6 +1,6 @@
 ## Troop.gd
 
-extends Node
+extends Node2D
 
 class_name Troop
 
@@ -21,7 +21,18 @@ var troop_type: String ## e.g. "Tank" "Knight" "infantry" ...
 var terrian_resist: Dictionary = {}
 
 ## =======Mthods===
-func _init(atroop_name: String, amax_hp: int, aarmor: int, 
+func _init(atroop_name: String = "", amax_hp: int = 0, aarmor: int = 0, 
+	agrid_position: Vector2i = Vector2.ZERO, atroop_type: String = "", ainitial_dmg_resist: Dictionary = {}) -> void:
+		
+	self.troop_name = atroop_name
+	self.max_hp = amax_hp
+	self.armor = aarmor
+	self.grid_position = agrid_position
+	self.troop_type = atroop_type
+	self.initial_dmg_resist = ainitial_dmg_resist 
+
+
+func set_data(atroop_name: String, amax_hp: int, aarmor: int, 
 	agrid_position: Vector2i, atroop_type: String, ainitial_dmg_resist: Dictionary) -> void:
 		
 	self.troop_name = atroop_name
@@ -30,6 +41,7 @@ func _init(atroop_name: String, amax_hp: int, aarmor: int,
 	self.grid_position = agrid_position
 	self.troop_type = atroop_type
 	self.initial_dmg_resist = ainitial_dmg_resist 
+
 
 ## calculate effective dmg based on armor and resistance
 ##

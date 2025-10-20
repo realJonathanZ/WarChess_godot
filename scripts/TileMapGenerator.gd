@@ -5,6 +5,8 @@ extends TileMapManager
 class_name TileMapGenerator
 
 
+@export var troop_container: Node2D
+
 ##Quick reference to TileSet coordinates.
 var terrain_dict = {
 	"Plains": Vector2(1,6),
@@ -55,17 +57,28 @@ func _ready():
 func update_troop_list(troop: Troop):
 	troop_list.append(troop)
 
+
 func spawn_test_troops():
-	var troop1 = Troop.new("Knight", 100, 2, Vector2i(2,2), "Knight", {})
-	var troop2 = Troop.new("Tank", 200, 5, Vector2i(2,3), "Tank", {})
+	var troop_scene: PackedScene = preload("res://scenes/Troop.tscn")
+	
+	#var troop1 = Troop.new("Knight", 100, 2, Vector2i(2,2), "Knight", {})
+	#var troop2 = Troop.new("Tank", 200, 5, Vector2i(2,3), "Tank", {})
+	var troop1: Troop = troop_scene.instantiate()
+	troop1.set_data("Knight", 100, 2, Vector2i(2,2), "Knight", {})
+	var troop2: Troop = troop_scene.instantiate()
+	troop2.set_data("Tank", 200, 5, Vector2i(2,3), "Tank", {})
 	
 	# add nodes to the troop container
-	add_child(troop1)
-	add_child(troop2)
+	troop_container.add_child(troop1)
+	troop_container.add_child(troop2)
 	
-	## register troops on tile objects
-	##get_tile(Vector2i(0,0)).troop = troop1
-	##get_tile(Vector2i(3,3)).troop = troop2
+	## register troops on tiles.
+	troop1.position = map_to_local(troop1.grid_position)
+	troop2.position = map_to_local(troop2.grid_position)
 	
+	##Might not need to keep a list of troops instead just troop_container.get_children() if we need them.
 	update_troop_list(troop1)
 	update_troop_list(troop2)
+	
+	for i in troop_list:
+		print(i.name, " ", i.grid_position)

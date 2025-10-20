@@ -802,11 +802,16 @@ tile_map_data = PackedByteArray("AAAAAAAAAgABAAcAAAAAAAEAAgABAAcAAAAAAAIAAgABAAc
 tile_set = SubResource("TileSet_iwxtu")
 script = ExtResource("1_6ulkd")
 
-[node name="TileMapLayer18x18" type="TileMapLayer" parent="."]
+[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container")]
 tile_map_data = PackedByteArray("AAAAAAAAAAABAAYAAAAAAAEAAAABAAYAAAAAAAIAAAABAAYAAAABAAIAAAABAAYAAAACAAIAAAABAAYAAAADAAIAAAABAAYAAAADAAEAAAABAAYAAAACAAEAAAABAAYAAAABAAEAAAABAAYAAAABAAAAAAABAAYAAAACAAAAAAABAAYAAAADAAAAAAABAAYAAAAAAAMAAAABAAYAAAABAAMAAAABAAYAAAACAAMAAAABAAYAAAADAAMAAAABAAYAAAA=")
 tile_set = SubResource("TileSet_p21b5")
 script = ExtResource("3_57l66")
+troop_container = NodePath("../TroopContainer")
 map_width = 10
 map_heigth = 10
 
 [node name="TroopContainer" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(81, 81)
+zoom = Vector2(3.185, 3.185)
