@@ -7,7 +7,7 @@ class_name Troop
 ## =======Properties===
 
 ## The customized/generated name of this troop. It is different from self.troop_type
-var troop_name: String
+@export var troop_name: String
 var hp: int
 var max_hp: int
 var armor: int ## reduces dmg taken

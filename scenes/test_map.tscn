@@ -792,6 +792,8 @@ custom_data_layer_0/name = "terrain_type"
 custom_data_layer_0/type = 21
 custom_data_layer_1/name = "block_mobility"
 custom_data_layer_1/type = 2
+custom_data_layer_2/name = "damage_res"
+custom_data_layer_2/type = 3
 sources/0 = SubResource("TileSetAtlasSource_57l66")
 
 [node name="TestMapRoot" type="Node2D"]
@@ -802,13 +804,34 @@ tile_map_data = PackedByteArray("AAAAAAAAAgABAAcAAAAAAAEAAgABAAcAAAAAAAIAAgABAAc
 tile_set = SubResource("TileSet_iwxtu")
 script = ExtResource("1_6ulkd")
 
-[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container")]
+[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container", "hover_ui")]
 tile_map_data = PackedByteArray("AAAAAAAAAAABAAYAAAAAAAEAAAABAAYAAAAAAAIAAAABAAYAAAABAAIAAAABAAYAAAACAAIAAAABAAYAAAADAAIAAAABAAYAAAADAAEAAAABAAYAAAACAAEAAAABAAYAAAABAAEAAAABAAYAAAABAAAAAAABAAYAAAACAAAAAAABAAYAAAADAAAAAAABAAYAAAAAAAMAAAABAAYAAAABAAMAAAABAAYAAAACAAMAAAABAAYAAAADAAMAAAABAAYAAAA=")
 tile_set = SubResource("TileSet_p21b5")
 script = ExtResource("3_57l66")
 troop_container = NodePath("../TroopContainer")
+hover_ui = NodePath("Control")
 map_width = 10
 map_heigth = 10
+
+[node name="Control" type="Control" parent="TileMapLayer18x18"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="ColorRect" type="ColorRect" parent="TileMapLayer18x18/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.431373)
 
 [node name="TroopContainer" type="Node2D" parent="."]
 

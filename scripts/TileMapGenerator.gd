@@ -7,6 +7,8 @@ class_name TileMapGenerator
 
 @export var troop_container: Node2D
 
+@export var hover_ui: Control
+
 ##Quick reference to TileSet coordinates.
 var terrain_dict = {
 	"Plains": Vector2(1,6),
@@ -54,6 +56,27 @@ func _ready():
 	spawn_test_troops()
 
 
+#Called everytime any input happens.
+func _input(event: InputEvent) -> void:
+	#If the event is the mouse moving
+	if event is InputEventMouseMotion:
+		var hovered_tile = local_to_map(get_global_mouse_position())
+		
+		#debug
+		print("Mouse is on ", hovered_tile)
+		
+		#move the hover ui to where the mosue is and align it with tiles.
+		hover_ui.position = map_to_local(hovered_tile)
+	
+	if event is InputEventMouseButton:
+		#On a left click.
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			var click_pos = map_to_local(event.position)
+			
+			#debug
+			print("Clicked on ", click_pos)
+
+
 func spawn_test_troops():
 	var troop_scene: PackedScene = preload("res://scenes/Troop.tscn")
 	
@@ -68,7 +91,7 @@ func spawn_test_troops():
 	troop_container.add_child(troop1)
 	troop_container.add_child(troop2)
 	
-	## register troops on tiles.
+	#change troop's position.
 	troop1.position = map_to_local(troop1.grid_position)
 	troop2.position = map_to_local(troop2.grid_position)
 	
