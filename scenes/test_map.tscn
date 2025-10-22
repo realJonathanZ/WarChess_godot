@@ -816,6 +816,7 @@ map_heigth = 10
 [node name="Control" type="Control" parent="TileMapLayer18x18"]
 layout_mode = 3
 anchors_preset = 0
+mouse_filter = 1
 
 [node name="ColorRect" type="ColorRect" parent="TileMapLayer18x18/Control"]
 layout_mode = 1
