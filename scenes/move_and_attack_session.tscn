@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://do4hyytfnbpnu"]
+
+[node name="MoveAndAttackSession" type="CanvasLayer"]
+
+[node name="PathLine" type="Line2D" parent="."]
