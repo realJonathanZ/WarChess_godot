@@ -9,10 +9,17 @@ class_name Troop
 ## A signal for when the mouse clicks on this troop
 signal troop_clicked(origin: Troop)
 
+## Is it moved?
+var moved: bool = false
+
+
 ## The customized/generated name of this troop. It is different from self.troop_type
 @export var troop_name: String
 var hp: int
 var max_hp: int
+#NOTE: added mobility value
+var mobility: int
+
 var armor: int ## reduces dmg taken
 ## For each entry in this dict -> attacker_type: dmg_multiplier
 var initial_dmg_resist: Dictionary = {}
@@ -24,22 +31,24 @@ var troop_type: String ## e.g. "Tank" "Knight" "infantry" ...
 var terrian_resist: Dictionary = {}
 
 ## =======Mthods===
-func _init(atroop_name: String = "", amax_hp: int = 0, aarmor: int = 0, 
+func _init(atroop_name: String = "", amax_hp: int = 0, amobility: int = 0, aarmor: int = 0, 
 	agrid_position: Vector2i = Vector2.ZERO, atroop_type: String = "", ainitial_dmg_resist: Dictionary = {}) -> void:
 		
 	self.troop_name = atroop_name
 	self.max_hp = amax_hp
+	self.mobility = amobility
 	self.armor = aarmor
 	self.grid_position = agrid_position
 	self.troop_type = atroop_type
 	self.initial_dmg_resist = ainitial_dmg_resist 
 
 
-func set_data(atroop_name: String, amax_hp: int, aarmor: int, 
+func set_data(atroop_name: String, amax_hp: int, amobility: int, aarmor: int, 
 	agrid_position: Vector2i, atroop_type: String, ainitial_dmg_resist: Dictionary) -> void:
 		
 	self.troop_name = atroop_name
 	self.max_hp = amax_hp
+	self.mobility = amobility
 	self.armor = aarmor
 	self.grid_position = agrid_position
 	self.troop_type = atroop_type
@@ -70,7 +79,12 @@ func is_alive() -> bool:
 
 #emitted when any input happens with the mouse clicking inside the troop's area2D
 func _on_click_detection_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if self.moved:
+		print("Hey, don't bother clicking on a troop that has already moved this turn!! Signal of clicking won't be emitted")
+		return ## Nah, no signal is omitted, since it is a moved troop.
+		## Moving the same unit twice in a round is cheating!!
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			print("Signal ommited : _on_click_detection_input_event()")
 			#emit the "troop_clicked" signal with origin = self
 			emit_signal("troop_clicked", self)

@@ -1,5 +1,8 @@
-[gd_scene format=3 uid="uid://do4hyytfnbpnu"]
+[gd_scene load_steps=2 format=3 uid="uid://do4hyytfnbpnu"]
 
-[node name="MoveAndAttackSession" type="CanvasLayer"]
+[ext_resource type="Script" uid="uid://w5du7u58ciip" path="res://scripts/MoveAndAttackSession.gd" id="1_7jr8y"]
+
+[node name="MoveAndAttackSession" type="Node2D"]
+script = ExtResource("1_7jr8y")
 
 [node name="PathLine" type="Line2D" parent="."]

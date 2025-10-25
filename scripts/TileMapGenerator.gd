@@ -30,6 +30,8 @@ var terrain_dict = {
 @export var map_heigth: int = 0
 
 
+
+
 func _ready():
 	## Godot does not support to call _init() in _ready(), it will crash
 	set_up_map(map_width, map_heigth) ## using set_up_map() declared inside super class, instead...
@@ -66,19 +68,26 @@ func _input(event: InputEvent) -> void:
 		var hovered_tile = local_to_map(get_global_mouse_position())
 		
 		#debug
-		print("Mouse is on ", hovered_tile)
+		#print("Mouse is on ", hovered_tile)
 		
 		#move the hover ui to where the mosue is and align it with tiles.
 		hover_ui.position = map_to_local(hovered_tile)
+		
+		#NOTE: the event is not .consumed() or being set_input_as_handled()
+		# Thus, the event continues travelling down the input chain.
+		# Input chain, when input occurs:
+		# 1. It’s sent first to focused UI elements.
+		# 2. If not consumed, it’s passed to nodes with _input().
+		# 3. Finally, if still unhandled, it goes to nodes with _unhandled_input().
 
 
 func spawn_test_troops():	
 	var troop_scene: PackedScene = preload("res://scenes/Troop.tscn")
 	
 	var troop1: Troop = troop_scene.instantiate()
-	troop1.set_data("Knight", 100, 2, Vector2i(0,0), "Knight", {})
+	troop1.set_data("Knight", 100, 4, 2, Vector2i(0,0), "Knight", {})
 	var troop2: Troop = troop_scene.instantiate()
-	troop2.set_data("Tank", 200, 5, Vector2i(2,3), "Tank", {})
+	troop2.set_data("Tank", 200, 4, 5, Vector2i(2,3), "Tank", {})
 	
 	# add nodes to the troop container
 	troop_container.add_child(troop1)
@@ -90,8 +99,8 @@ func spawn_test_troops():
 	troop2.position = map_to_local(troop2.grid_position)
 	
 	#When the "troop_clicked" signal is emitted from the troop scene, run the troop_selected() function
-	troop1.connect("troop_clicked", troop_selected)
-	troop2.connect("troop_clicked", troop_selected)
+	troop1.connect("troop_clicked", _on_troop_selected)
+	troop2.connect("troop_clicked", _on_troop_selected)
 	
 	
 	troop_list.append(troop1)
@@ -101,8 +110,15 @@ func spawn_test_troops():
 ##This function is called when a troop is clicked on. The troop emits a signal 
 ##which connects to this function when the troop is spawned in.
 ## Signal: omited by function side troop.gd
-func troop_selected(origin: Troop):
-	print("clicked on troop at ", origin.grid_position)
-	print("hovered on (self.hover_ui(control)) at -- (global position)", self.hover_ui.position)
+func _on_troop_selected(origin: Troop):
+	# origin can be used to set the selected troop for future UI/pathfinding implementations.
 	
-	## origin can be used to set the selected troop for future UI/pathfinding implementations.
+	#debug
+	#print("clicked on troop at ", origin.grid_position)
+	#print("hovered on (self.hover_ui(control)) at -- (global position)", self.hover_ui.position)
+	var session_scene = preload("res://scenes/move_and_attack_session.tscn")
+	var session = session_scene.instantiate()
+	get_parent().add_child(session)
+	# Wait one frame to ensure the input event doesn’t immediately propagate
+	session.start_session(origin, self)
+	
