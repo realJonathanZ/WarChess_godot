@@ -1,4 +1,8 @@
-#TileMapManager_testing4by4.gd
+### This script is abandoned from early design stage.
+## new viable substituent: TileMapGenerator.gd
+## Thus, it has been put in abandon directory
+
+##TileMapManager_testing4by4.gd
 
 extends TileMapManager
 
