@@ -1,4 +1,4 @@
-# TileMapManager.gd
+## TileMapManager.gd
 
 ##NOTE: Changed this from extends Node2D to TileMapLayer so that we can use the built-in functions of TileMapLayer.
 extends TileMapLayer
@@ -8,7 +8,16 @@ class_name TileMapManager
 ## the width and the height of the map
 var width: int
 var height: int
-var tiles: Array = [] ## 2D Array of Tile instances, initialized after construction
+
+## The array that will be initialized with null-s in it.
+## Each entry means nothing in the current implementation, just a placeholder for
+## "there should be a tile here"
+##
+## We should find troop instances from troop_list (in subclass or this class)
+## We should fins tile mobility via godot built in customed layer of tilemaplayer.
+## (Through) TileSet -> Paint -> Paint properties -> scroll down to last
+var tiles: Array = [] 
+
 
 ## When the construction for an instance is done..
 ## The self.tiles attr is..
@@ -28,10 +37,10 @@ func  set_up_map(awidth: int, aheight: int):
 			
 ## set the tile object at the position (x, y)
 ##
-func set_tile(atile:Tile):
-	self.tiles[atile.position.x][atile.position.y] = atile
+#func set_tile(atile:Tile):
+	#self.tiles[atile.position.x][atile.position.y] = atile
 	
 ## get the tile object at postion(x, y)
 ##
-func get_tile(aposition: Vector2i) -> Tile:
-	return self.tiles[aposition.x][aposition.y]
+#func get_tile(aposition: Vector2i) -> Tile:
+	#return self.tiles[aposition.x][aposition.y]

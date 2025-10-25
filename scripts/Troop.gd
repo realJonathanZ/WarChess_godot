@@ -68,7 +68,7 @@ func is_alive() -> bool:
 	return do_alive
 
 
-#emitted when any input happens with the mouse inside the troop's area2D
+#emitted when any input happens with the mouse clicking inside the troop's area2D
 func _on_click_detection_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():

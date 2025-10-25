@@ -1,4 +1,8 @@
-#TileMapManager_testing4by4.gd
+## TileMapGenerator.gd
+
+## Attached to the node TileMapLayer18x18
+## '18' here means the Tileset Tab -> Setup -> the texture region got x=y=18px
+## i.e. each texture region got 18x18px range
 
 extends TileMapManager
 
@@ -33,7 +37,6 @@ func _ready():
 	#debug
 	print("-----From TileMapLayer 18x18-----")
 	
-	# create tiles object for every potion in the map
 	for x in range(width):
 		for y in range(height):
 			#Adding 3 types of tiles just to test that the custom properties actually load for each tile
@@ -69,17 +72,18 @@ func _input(event: InputEvent) -> void:
 		hover_ui.position = map_to_local(hovered_tile)
 
 
-func spawn_test_troops():
+func spawn_test_troops():	
 	var troop_scene: PackedScene = preload("res://scenes/Troop.tscn")
 	
 	var troop1: Troop = troop_scene.instantiate()
-	troop1.set_data("Knight", 100, 2, Vector2i(2,2), "Knight", {})
+	troop1.set_data("Knight", 100, 2, Vector2i(0,0), "Knight", {})
 	var troop2: Troop = troop_scene.instantiate()
 	troop2.set_data("Tank", 200, 5, Vector2i(2,3), "Tank", {})
 	
 	# add nodes to the troop container
 	troop_container.add_child(troop1)
 	troop_container.add_child(troop2)
+	## NOTE: have mannully set TroopContainer.zindex to be 5, so affecting all created troops appearing at the top.
 	
 	#change troop's position.
 	troop1.position = map_to_local(troop1.grid_position)
@@ -94,8 +98,11 @@ func spawn_test_troops():
 	troop_list.append(troop2)
 
 
-#This function is called when a troop is clicked on. The troop emits a signal which connects to this function when the troop is spawned in.
+##This function is called when a troop is clicked on. The troop emits a signal 
+##which connects to this function when the troop is spawned in.
+## Signal: omited by function side troop.gd
 func troop_selected(origin: Troop):
 	print("clicked on troop at ", origin.grid_position)
+	print("hovered on (self.hover_ui(control)) at -- (global position)", self.hover_ui.position)
 	
-	#origin can be used to set the selected troop for future UI/pathfinding implementations.
+	## origin can be used to set the selected troop for future UI/pathfinding implementations.

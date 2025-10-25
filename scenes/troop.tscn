@@ -14,9 +14,9 @@ troop_name = "soldier"
 scale = Vector2(0.125, 0.125)
 texture = ExtResource("2_pbcxd")
 
-[node name="Click Detection" type="Area2D" parent="."]
+[node name="ClickDetection" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Click Detection"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickDetection"]
 shape = SubResource("RectangleShape2D_pbcxd")
 
-[connection signal="input_event" from="Click Detection" to="." method="_on_click_detection_input_event"]
+[connection signal="input_event" from="ClickDetection" to="." method="_on_click_detection_input_event"]

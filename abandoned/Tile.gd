@@ -1,4 +1,5 @@
-#Tile.gd
+## Design from the first stage, no longer used
+## Tile.gd
 
 extends Node
 
