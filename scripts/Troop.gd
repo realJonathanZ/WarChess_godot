@@ -1,13 +1,16 @@
 ## Troop.gd
 
-extends Node
+extends Node2D
 
 class_name Troop
 
 ## =======Properties===
 
+## A signal for when the mouse clicks on this troop
+signal troop_clicked(origin: Troop)
+
 ## The customized/generated name of this troop. It is different from self.troop_type
-var troop_name: String
+@export var troop_name: String
 var hp: int
 var max_hp: int
 var armor: int ## reduces dmg taken
@@ -21,7 +24,18 @@ var troop_type: String ## e.g. "Tank" "Knight" "infantry" ...
 var terrian_resist: Dictionary = {}
 
 ## =======Mthods===
-func _init(atroop_name: String, amax_hp: int, aarmor: int, 
+func _init(atroop_name: String = "", amax_hp: int = 0, aarmor: int = 0, 
+	agrid_position: Vector2i = Vector2.ZERO, atroop_type: String = "", ainitial_dmg_resist: Dictionary = {}) -> void:
+		
+	self.troop_name = atroop_name
+	self.max_hp = amax_hp
+	self.armor = aarmor
+	self.grid_position = agrid_position
+	self.troop_type = atroop_type
+	self.initial_dmg_resist = ainitial_dmg_resist 
+
+
+func set_data(atroop_name: String, amax_hp: int, aarmor: int, 
 	agrid_position: Vector2i, atroop_type: String, ainitial_dmg_resist: Dictionary) -> void:
 		
 	self.troop_name = atroop_name
@@ -30,6 +44,7 @@ func _init(atroop_name: String, amax_hp: int, aarmor: int,
 	self.grid_position = agrid_position
 	self.troop_type = atroop_type
 	self.initial_dmg_resist = ainitial_dmg_resist 
+
 
 ## calculate effective dmg based on armor and resistance
 ##
@@ -51,4 +66,11 @@ func take_dmg(dmg: int, attacker_type: String) -> int:
 func is_alive() -> bool:
 	var do_alive = hp > 0
 	return do_alive
-	
+
+
+#emitted when any input happens with the mouse inside the troop's area2D
+func _on_click_detection_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			#emit the "troop_clicked" signal with origin = self
+			emit_signal("troop_clicked", self)
