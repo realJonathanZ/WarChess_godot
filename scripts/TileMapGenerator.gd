@@ -107,14 +107,14 @@ func spawn_test_troops():
 	troop_list.append(troop2)
 
 
-##This function is called when a troop is clicked on. The troop emits a signal 
-##which connects to this function when the troop is spawned in.
-## Signal: omited by function side troop.gd
+## This function is called when a troop is clicked on.
+## The signal is connected via troopx.connect("troop_clicked", _on_troop_selected) in _ready() (ancestor)
+## Signal: omited by troop.gd + area2D node under the troop
 func _on_troop_selected(origin: Troop):
 	# origin can be used to set the selected troop for future UI/pathfinding implementations.
 	
 	#debug
-	#print("clicked on troop at ", origin.grid_position)
+	print("clicked on troop at ", origin.grid_position)
 	#print("hovered on (self.hover_ui(control)) at -- (global position)", self.hover_ui.position)
 	var session_scene = preload("res://scenes/move_and_attack_session.tscn")
 	var session = session_scene.instantiate()

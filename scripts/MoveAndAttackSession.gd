@@ -5,7 +5,7 @@ extends Node2D
 @onready var path_line: Line2D = $PathLine
 
 var selected_troop: Troop # The troop currently moving in the session
-var tilemap: TileMapGenerator # Reference to the TileMapGenerator
+var tilemap: TileMapManager # Reference to the TileMapGenerator
 var move_stack: Array[Vector2i] = [] # stack of vector2i points that plotting the path
 
 ## The cost of move for this moement session, should eventually become
@@ -13,7 +13,7 @@ var move_stack: Array[Vector2i] = [] # stack of vector2i points that plotting th
 var move_cost: int = 0
 
 ## Called to start the session
-func start_session(troop: Troop, tilemap_ref: TileMapGenerator) -> void:
+func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
 	selected_troop = troop
 	tilemap = tilemap_ref
 	move_stack.clear()
@@ -109,16 +109,24 @@ func _confirm_move() -> void:
 	selected_troop.grid_position = target_tile
 	selected_troop.position = tilemap.map_to_local(target_tile)
 	selected_troop.moved = true   ## intended to make it to false gain when it's starting next turn.
+	
+	##NOTE: This line is important to prevent the area2D on the troop to send more signals out after 
+	## the session-move is done (for this turn)!
+	## Instantly, without defer, disable the area2D's receiving event
+	##TODO: in the turn-based logic, at start of each turn, set this attribute back
+	selected_troop.get_node("ClickDetection").input_pickable = false 
+	
+	
 	print("Troop moved to ", target_tile)
 	
 	_cleanup_session()
 
 func _cancel_session() -> void:
-	#print("Move session cancelled.")
+	print("Move session cancelled.")
 	_cleanup_session()
 
 func _cleanup_session() -> void:
-	#print("clean up")
+	print("clean up for the session")
 	queue_free()
 	
 	

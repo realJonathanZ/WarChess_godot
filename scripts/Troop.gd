@@ -79,12 +79,10 @@ func is_alive() -> bool:
 
 #emitted when any input happens with the mouse clicking inside the troop's area2D
 func _on_click_detection_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if self.moved:
-		print("Hey, don't bother clicking on a troop that has already moved this turn!! Signal of clicking won't be emitted")
-		return ## Nah, no signal is omitted, since it is a moved troop.
-		## Moving the same unit twice in a round is cheating!!
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-			print("Signal ommited : _on_click_detection_input_event()")
-			#emit the "troop_clicked" signal with origin = self
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+		if self.moved:
+			print("Hey, don't bother clicking on a troop that has already moved this turn!! Signal won't be emitted")
+			return
+		else:
+			print("Signal emitted : _on_click_detection_input_event() for", troop_name)
 			emit_signal("troop_clicked", self)
