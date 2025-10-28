@@ -8,10 +8,15 @@ class_name Troop
 
 ## A signal for when the mouse clicks on this troop
 signal troop_clicked(origin: Troop)
+signal troop_hovered(origin: Troop)
+signal troop_unhovered()
 
 ## Is it moved?
 var moved: bool = false
 
+enum factions {RED_TEAM, BLUE_TEAM} #List of factions, might change names later on.
+
+var faction: factions #this troop's faction.
 
 ## The customized/generated name of this troop. It is different from self.troop_type
 @export var troop_name: String
@@ -62,6 +67,9 @@ func set_data(atroop_name: String, amax_hp: int, amobility: int, aarmor: int,
 ## @post-condition: THIS troop's hp is reduced, ground to zero
 ## @return: the weighted-computed damage that this unit is supposed to take 
 func take_dmg(dmg: int, attacker_type: String) -> int:
+	#debug to show that damage happens
+	rotation_degrees += 90
+	
 	## initial dmg-multiplier: 1.0
 	## change in some situations..
 	var mltp = 1.0 ## short-hand for damage-multiplier
@@ -86,3 +94,11 @@ func _on_click_detection_input_event(viewport: Node, event: InputEvent, shape_id
 		else:
 			print("Signal emitted : _on_click_detection_input_event() for", troop_name)
 			emit_signal("troop_clicked", self)
+
+
+func _on_click_detection_mouse_entered() -> void:
+	emit_signal("troop_hovered", self)
+
+
+func _on_click_detection_mouse_exited() -> void:
+	emit_signal("troop_unhovered")

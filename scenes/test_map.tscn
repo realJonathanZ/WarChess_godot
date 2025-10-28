@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bxmo0q0yysr88"]
+[gd_scene load_steps=6 format=3 uid="uid://bxmo0q0yysr88"]
 
 [ext_resource type="Texture2D" uid="uid://ce7ilqqhngtw3" path="res://assets/tileset_plains_070419_zp.png" id="1_xht5f"]
 [ext_resource type="Script" uid="uid://0scg245lhovn" path="res://scripts/TileMapGenerator.gd" id="2_y4kt2"]
+[ext_resource type="PackedScene" uid="uid://do4hyytfnbpnu" path="res://scenes/move_and_attack_session.tscn" id="3_57l66"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_57l66"]
 texture = ExtResource("1_xht5f")
@@ -179,10 +180,13 @@ texture_region_size = Vector2i(18, 18)
 2:8/0 = 0
 3:8/0 = 0
 3:8/0/custom_data_0 = &"Sea"
+3:8/0/custom_data_1 = 999
 4:8/0 = 0
 4:8/0/custom_data_0 = &"Sea"
+4:8/0/custom_data_1 = 999
 5:8/0 = 0
 5:8/0/custom_data_0 = &"Sea"
+5:8/0/custom_data_1 = 999
 6:8/0 = 0
 7:8/0 = 0
 8:8/0 = 0
@@ -203,10 +207,13 @@ texture_region_size = Vector2i(18, 18)
 2:9/0 = 0
 3:9/0 = 0
 3:9/0/custom_data_0 = &"Sea"
+3:9/0/custom_data_1 = 999
 4:9/0 = 0
 4:9/0/custom_data_0 = &"Sea"
+4:9/0/custom_data_1 = 999
 5:9/0 = 0
 5:9/0/custom_data_0 = &"Sea"
+5:9/0/custom_data_1 = 999
 6:9/0 = 0
 7:9/0 = 0
 8:9/0 = 0
@@ -227,10 +234,13 @@ texture_region_size = Vector2i(18, 18)
 2:10/0 = 0
 3:10/0 = 0
 3:10/0/custom_data_0 = &"Sea"
+3:10/0/custom_data_1 = 999
 4:10/0 = 0
 4:10/0/custom_data_0 = &"Sea"
+4:10/0/custom_data_1 = 999
 5:10/0 = 0
 5:10/0/custom_data_0 = &"Sea"
+5:10/0/custom_data_1 = 999
 6:10/0 = 0
 7:10/0 = 0
 8:10/0 = 0
@@ -392,13 +402,16 @@ z_index = 5
 position = Vector2(170, 91)
 zoom = Vector2(3.185, 3.185)
 
-[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container", "hover_ui")]
+[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container", "hover_ui", "session")]
 tile_set = SubResource("TileSet_p21b5")
 script = ExtResource("2_y4kt2")
 troop_container = NodePath("../TroopContainer")
 hover_ui = NodePath("Control")
+session = NodePath("MoveAndAttackSession")
 map_width = 10
 map_heigth = 10
+
+[node name="MoveAndAttackSession" parent="TileMapLayer18x18" instance=ExtResource("3_57l66")]
 
 [node name="Control" type="Control" parent="TileMapLayer18x18"]
 layout_mode = 3

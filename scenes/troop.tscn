@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cagm2spxxr2q2" path="res://icon.svg" id="2_pbcxd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pbcxd"]
-size = Vector2(16, 16)
+size = Vector2(18, 18)
 
 [node name="Troop" type="Node2D"]
 script = ExtResource("1_j1j8g")
@@ -20,3 +20,5 @@ texture = ExtResource("2_pbcxd")
 shape = SubResource("RectangleShape2D_pbcxd")
 
 [connection signal="input_event" from="ClickDetection" to="." method="_on_click_detection_input_event"]
+[connection signal="mouse_entered" from="ClickDetection" to="." method="_on_click_detection_mouse_entered"]
+[connection signal="mouse_exited" from="ClickDetection" to="." method="_on_click_detection_mouse_exited"]

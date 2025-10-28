@@ -13,7 +13,11 @@ class_name TileMapGenerator
 
 @export var hover_ui: Control
 
-var troop_list: Array [Troop]
+var hover_ui_normal: Color = Color("006f006e")
+var hover_ui_attack: Color = Color("6f00006e")
+
+@export var session: MoveAndAttackSession
+
 
 ##Quick reference to TileSet coordinates.
 var terrain_dict = {
@@ -89,6 +93,9 @@ func spawn_test_troops():
 	var troop2: Troop = troop_scene.instantiate()
 	troop2.set_data("Tank", 200, 4, 5, Vector2i(2,3), "Tank", {})
 	
+	troop1.faction = Troop.factions.RED_TEAM
+	troop2.faction = Troop.factions.BLUE_TEAM
+	
 	# add nodes to the troop container
 	troop_container.add_child(troop1)
 	troop_container.add_child(troop2)
@@ -98,13 +105,15 @@ func spawn_test_troops():
 	troop1.position = map_to_local(troop1.grid_position)
 	troop2.position = map_to_local(troop2.grid_position)
 	
+	connect_troop_signals(troop1)
+	connect_troop_signals(troop2)
+
+
+func connect_troop_signals(troop: Troop):
 	#When the "troop_clicked" signal is emitted from the troop scene, run the troop_selected() function
-	troop1.connect("troop_clicked", _on_troop_selected)
-	troop2.connect("troop_clicked", _on_troop_selected)
-	
-	
-	troop_list.append(troop1)
-	troop_list.append(troop2)
+	troop.troop_clicked.connect(_on_troop_selected)
+	troop.troop_hovered.connect(_on_troop_hovered)
+	troop.troop_unhovered.connect(_on_troop_unhovered)
 
 
 ## This function is called when a troop is clicked on.
@@ -115,10 +124,31 @@ func _on_troop_selected(origin: Troop):
 	
 	#debug
 	print("clicked on troop at ", origin.grid_position)
-	#print("hovered on (self.hover_ui(control)) at -- (global position)", self.hover_ui.position)
-	var session_scene = preload("res://scenes/move_and_attack_session.tscn")
-	var session = session_scene.instantiate()
-	get_parent().add_child(session)
+	
+
 	# Wait one frame to ensure the input event doesn’t immediately propagate
 	session.start_session(origin, self)
-	
+
+
+
+func _on_troop_hovered(origin: Troop):
+	#If the player hovers over a troop while a movement sesssion is active then give it the option to attack that troop.
+	if session.active:
+		session.tile_occupied = true
+		session.target_troop = origin
+		
+		#set hover ui to red
+		var hover_ui_c_rect = hover_ui.get_child(0)
+		if hover_ui_c_rect is ColorRect:
+			hover_ui_c_rect.color = hover_ui_attack
+
+
+func _on_troop_unhovered():
+	if session.active:
+		session.tile_occupied = false
+		session.target_troop = null
+		
+	#set hover ui to green again.
+	var hover_ui_c_rect = hover_ui.get_child(0)
+	if hover_ui_c_rect is ColorRect:
+		hover_ui_c_rect.color = hover_ui_normal
