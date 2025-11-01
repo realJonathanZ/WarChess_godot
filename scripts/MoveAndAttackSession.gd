@@ -12,15 +12,25 @@ var move_stack: Array[Vector2i] = [] # stack of vector2i points that plotting th
 
 var troop_container: Node2D = null # This will be updated to the reference to TroopContainer node in start_session()
 
+# list of grid positions (Vector2i) within this troop's attack range
+var attackable_cells: Array[Vector2i] = [] # Will be fulfilled in helper function later
+
 var active: bool = false
 
-#Both of these are set by TileMapGenerator
+##Both of these are set by TileMapGenerator
+## TODO: maybe need to edit a bit on var tile_occupied? not used in this script
 var tile_occupied: bool = false #If the mouse is blocked by a troop (used for attacks and making sure that a space is occupied).
+
+## This troop is currently in use by function _confirm_attack() in this script. It is class var
 var target_troop: Troop #The troop being attacked.
 
 # The cost of move for this moement session, should eventually become
 # the sum of all block_mobilities for the tiles
-var move_cost: int = 0
+var move_cost: int
+
+# The flags indicating if the selected troop in this session has attacked/ has moved, respectively
+var has_attacked_in_session:bool
+var has_moved_in_session:bool
 
 
 ## Called to start the session
@@ -32,8 +42,17 @@ func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
 	# Assumes the hierarchy: TestMapRoot/TroopContainer
 	self.troop_container = get_tree().get_root().get_node("TestMapRoot/TroopContainer")
 	
+	# calculate the range, give it to atack_range_tiles
+	attackable_cells = _calculate_attack_range()
+	#print("Attackable tiles for", troop.troop_name, ":", attackable_cells)
+	
 	active = true
 	visible = true
+	
+	# reset per-session state flags
+	# these flags are used in move_and_attack cotrol flows, that this session controls
+	self.has_attacked_in_session = false
+	self.has_moved_in_session = false
 	
 	move_stack.clear()
 	move_stack.append(troop.grid_position) ## the orginal starting tile-index of the troop
@@ -45,6 +64,10 @@ func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
 	path_line.default_color = Color(0,1,0) ## Green = OK, can do the move
 	_update_path_visual()
 
+# =====
+# Mouse event propagation control flow
+# =====
+
 
 func _input(event: InputEvent) -> void:
 	if active:
@@ -54,6 +77,11 @@ func _input(event: InputEvent) -> void:
 			return
 			
 		if event is InputEventMouseMotion:
+			# if the flag shows the unit has done the move in this session...
+			# Don't need to track the preview path! DOn't need to draw lines! Don't need to _update_stack() either
+			if has_moved_in_session:
+				return  # stop drawing the path after troop has moved
+				
 			var mouse_pos = get_viewport().get_camera_2d().get_global_mouse_position()
 			var hovered_tile = tilemap.local_to_map(mouse_pos)
 			_update_stack(hovered_tile)
@@ -62,10 +90,52 @@ func _input(event: InputEvent) -> void:
 			
 		elif event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-				_confirm_move()
+				_handle_left_click()
 			elif event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed():
 				_cancel_session()
 				
+
+func _handle_left_click() -> void:
+	var mouse_pos = get_viewport().get_camera_2d().get_global_mouse_position()
+	var clicked_cell = tilemap.local_to_map(mouse_pos) # this var is a vector2i e.g. (4.3)
+	
+	if self.has_attacked_in_session:
+		print("This troop already attacked. Cannot act further this turn.")
+		return
+	
+	# Am I clicking on an empty cell, or a troop(of any fraction, any type)?
+	var clicked_troop = null
+	for troop in troop_container.get_children():
+		if troop.grid_position == clicked_cell:
+			clicked_troop = troop
+			break
+			
+	# case #1: i clicked on enemy troop, try to attack it
+	if clicked_troop != null and clicked_troop.faction != selected_troop.faction:
+		if clicked_cell in attackable_cells:
+			print("about to confirm_attack on enemy:", clicked_troop.troop_name, "at", clicked_cell)
+			_confirm_attack(clicked_troop)
+		else:
+			print("Enemy out of range:", clicked_troop.troop_name, "at", clicked_cell)
+		return
+		
+	# case #2: clciked on ally or self, try do nothing, ignore the event!
+	if clicked_troop != null and clicked_troop.faction == selected_troop.faction:
+		print("Clicked on an ally troop or self, ignoring this click event")
+		return
+		
+	# case #3: clciked on empty cell
+	# but is it really empty?
+	if clicked_troop != null:
+		print("Error: something is wrong inside _handle_left_click()")
+		return
+	
+	if self.has_moved_in_session:
+		print("Already moved — you can only attack now.")
+	else:
+		_confirm_move()
+
+
 # =====
 # Move Path Logic
 # =====
@@ -91,10 +161,10 @@ func _update_stack(tile: Vector2i) -> void:
 	# Handle the "mouse--hover-back" scenario
 	if move_stack.size() >= 2 and tile == move_stack[move_stack.size() - 2]:
 		var popped = move_stack.pop_back()
-		print("poped location:", popped)
+		#print("poped location:", popped)
 	else: # if no pop form stack, it's time to append!
 		if tile != last_tile:
-			print("appended location", tile)
+			#print("appended location", tile)
 			move_stack.append(tile)
 	
 	# calculate new move cost based on path-cords stack
@@ -146,9 +216,9 @@ func _update_path_visual() -> void:
 ## Validate the path in different dimentions(, at least 3).
 ## Returns a bool value true is path is validated, otherwise false
 func _validate_path() -> bool:
-	var bool01 = _validate_destination()
-	var bool02 = _validate_no_enemy_blocking()
-	var bool03 = _validate_by_movement_type_and_terrains()
+	#var bool01 = _validate_destination()
+	#var bool02 = _validate_no_enemy_blocking()
+	#var bool03 = _validate_by_movement_type_and_terrains()
 	
 	#print("_validate_destination() returns:", bool01)
 	#print("_validate_no_enemy_blocking() returns:", bool02)
@@ -234,20 +304,75 @@ func _confirm_move() -> void:
 	selected_troop.position = tilemap.map_to_local(target_tile)
 	selected_troop.moved = true   ## intended to make it to false gain when it's starting next turn.
 	## TODO: handle the move-animation here??
+	
+	self.has_moved_in_session = true
 
 	# This line is used for makeing area2D unreactive to input events for an amount of time(unused)
 	#selected_troop.get_node("ClickDetection").input_pickable = false 
+	# Recalculate attack range after movement
+	attackable_cells = _calculate_attack_range()
+	# print("Attack range recalculated after move:", attackable_cells)
 	print("Troop moved to ", target_tile)
+	print("Now in attack phase — you may click an enemy to attack.")
 	
-	_cleanup_session()
+	## The move is done, whethwe we want to attack another troop, or to quit the session, we clear the path
+	path_line.clear_points() # clean the path points after move!
 	
 	
-##Attack target_troop using selected_troop's stats
-func _confirm_attack():
-	pass
-	##Make sure it's not attacking itself or an ally.
-	#if target_troop != selected_troop and target_troop.faction != selected_troop.faction:
-		#target_troop.take_dmg(1, selected_troop.troop_type)
+# =====
+# Attacking logic , and the helper funcitons
+# =====	
+
+func _calculate_attack_range() -> Array[Vector2i]:
+	if selected_troop == null:
+		#print("Something is wrong in _calculate_attack_range(), there is no selected troop")
+		return []
+
+	var results: Array[Vector2i] = []
+	var origin: Vector2i = selected_troop.grid_position
+	var lower : int = selected_troop.range_lower_bound
+	var upper : int = selected_troop.range_upper_bound
+
+	for dx in range(-upper, upper + 1):
+		for dy in range(-upper, upper + 1):
+			var distance : int= abs(dx) + abs(dy)
+			# distance filter: inside [lower, upper], boundary included
+			if distance >= lower and distance <= upper and distance != 0:
+				var candidate = origin + Vector2i(dx, dy)
+				# only append when it's valid cell on tilemap
+				if tilemap.get_used_cells().has(candidate):
+					results.append(candidate)
+	return results
+	
+# =====
+# Attack confirmation
+# =====
+
+## When this function is called, selected troop will deal dmg to target troop
+## @para target_troop: the target troop instance "being attacked"
+func _confirm_attack(target_troop: Troop) -> void:
+	if selected_troop == null or target_troop == null:
+		print("Attack error: missing references. in _confirm_attack()")
+		return
+		
+	print(selected_troop.troop_name, "attacks", target_troop.troop_name)
+	print("selected troop on grid:", selected_troop.grid_position)
+	print("target troop on grid:", target_troop.grid_position)
+	
+	target_troop.take_dmg(10, selected_troop.troop_type) # temporary dmg #TODO: modify troop.gd to include the troop dmg attr
+	
+	## This troop is moved for this turn
+	selected_troop.moved = true
+	
+	## This session, this flag, should be changed!
+	self.has_attacked_in_session = true
+	
+	_cleanup_session() 
+	
+
+# ====
+# Cancel and clean up
+# ====
 
 
 func _cancel_session() -> void:

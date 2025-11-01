@@ -85,27 +85,53 @@ func _input(event: InputEvent) -> void:
 
 
 func spawn_test_troops():	
+	## Recap the parameters we need for creating a troop, in order! (the init and set data funcs are inside Troop.gd)
+	##1 atroop_name: String
+	##2 amax_hp: int
+	##3 amobility: int
+	##4 arange_lower_bound: int
+	##5 arange_upper_bound: int
+	##6 aarmor: int
+	##7 agrid_position: Vector2i
+	##8 atroop_type: String
+	##9 ainitial_dmg_resist: Dictionary -> Key: string , Value: float  # NOT TESTED YET
+	##
+	
+	
 	var troop_scene: PackedScene = preload("res://scenes/Troop.tscn")
 	
 	var troop1: Troop = troop_scene.instantiate()
-	troop1.set_data("Knight", 100, 4, 2, Vector2i(0,0), "Knight", {})
+	troop1.set_data("Knight", 100, 6, 1, 1, 2, Vector2i(0,0), "Knight", {})
 	var troop2: Troop = troop_scene.instantiate()
-	troop2.set_data("Tank", 200, 4, 5, Vector2i(2,3), "Tank", {})
+	troop2.set_data("Tank", 200, 6, 1, 1, 5, Vector2i(0,5), "Tank", {})
+	var troop3: Troop = troop_scene.instantiate()
+	troop3.set_data("Archer", 200, 6, 2, 3, 5, Vector2i(5,0), "Tank", {})
+	var troop4: Troop = troop_scene.instantiate()
+	troop4.set_data("Missile-Vehicle", 200, 6, 4, 7, 5, Vector2i(5,5), "Tank", {})
 	
 	troop1.faction = Troop.factions.RED_TEAM
-	troop2.faction = Troop.factions.BLUE_TEAM
+	troop2.faction = Troop.factions.RED_TEAM
+	troop3.faction = Troop.factions.BLUE_TEAM
+	troop4.faction = Troop.factions.BLUE_TEAM
+	
 	
 	# add nodes to the troop container
 	troop_container.add_child(troop1)
 	troop_container.add_child(troop2)
+	troop_container.add_child(troop3)
+	troop_container.add_child(troop4)
 	## NOTE: have mannully set TroopContainer.zindex to be 5, so affecting all created troops appearing at the top.
 	
 	#change troop's position.
 	troop1.position = map_to_local(troop1.grid_position)
 	troop2.position = map_to_local(troop2.grid_position)
+	troop3.position = map_to_local(troop3.grid_position)
+	troop4.position = map_to_local(troop4.grid_position)
 	
 	connect_troop_signals(troop1)
 	connect_troop_signals(troop2)
+	connect_troop_signals(troop3)
+	connect_troop_signals(troop4)
 
 
 func connect_troop_signals(troop: Troop):
@@ -119,14 +145,23 @@ func connect_troop_signals(troop: Troop):
 ## The signal is connected via troopx.connect("troop_clicked", _on_troop_selected) in _ready() (ancestor)
 ## Signal: omited by troop.gd + area2D node under the troop
 func _on_troop_selected(origin: Troop):
-	# origin can be used to set the selected troop for future UI/pathfinding implementations.
+	# origin is passed to start_session(), to be a "selected_troop" in the session
 	
 	#debug
 	print("clicked on troop at ", origin.grid_position)
-	
+	# now, we pretend that it's BLUE_TEAM's turn
+	# So, clicking on red troop do trigger call back function _on_troop_selected()
+	# But since we are blue team, we cannot operate on red troops!
+	# Therefore, clicking on red troop won't start session
+	var current_turn_faction = Troop.factions.BLUE_TEAM
+	if origin.faction != current_turn_faction:
+		print("It's currently BLUE_TEAM's turn — cannot select enemy troop:", origin.troop_name)
+		return
+		
+	# otherwise, the fraction matches the current_turn_faction
+	# session starts
 	session.start_session(origin, self)
-
-
+	
 
 func _on_troop_hovered(origin: Troop):
 	#If the player hovers over a troop while a movement sesssion is active then give it the option to attack that troop.
