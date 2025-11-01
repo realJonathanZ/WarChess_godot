@@ -35,7 +35,6 @@ var terrain_dict = {
 
 
 
-
 func _ready():
 	## Godot does not support to call _init() in _ready(), it will crash
 	set_up_map(map_width, map_heigth) ## using set_up_map() declared inside super class, instead...
@@ -125,8 +124,6 @@ func _on_troop_selected(origin: Troop):
 	#debug
 	print("clicked on troop at ", origin.grid_position)
 	
-
-	# Wait one frame to ensure the input event doesn’t immediately propagate
 	session.start_session(origin, self)
 
 
