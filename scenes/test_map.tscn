@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://bxmo0q0yysr88"]
+[gd_scene load_steps=7 format=3 uid="uid://bxmo0q0yysr88"]
 
+[ext_resource type="Script" uid="uid://djevjqj3xfglg" path="res://scripts/TurnManager.gd" id="1_p21b5"]
 [ext_resource type="Texture2D" uid="uid://ce7ilqqhngtw3" path="res://assets/tileset_plains_070419_zp.png" id="1_xht5f"]
 [ext_resource type="Script" uid="uid://0scg245lhovn" path="res://scripts/TileMapGenerator.gd" id="2_y4kt2"]
 [ext_resource type="PackedScene" uid="uid://do4hyytfnbpnu" path="res://scenes/move_and_attack_session.tscn" id="3_57l66"]
@@ -396,6 +397,7 @@ sources/0 = SubResource("TileSetAtlasSource_57l66")
 [node name="TestMapRoot" type="Node2D"]
 
 [node name="TurnManager" type="Node" parent="."]
+script = ExtResource("1_p21b5")
 
 [node name="TroopContainer" type="Node2D" parent="."]
 z_index = 5
