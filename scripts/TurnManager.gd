@@ -40,7 +40,7 @@ func _turn_plus_plus():
 	elif current_faction == Faction.RED_TEAM:
 		current_faction = Faction.BLUE_TEAM
 	else:
-		print("Error: something went wrong in TurnManager.gd -> _advance_turn()")
+		print("Error: something went wrong in TurnManager.gd -> _turn_plus_plus()")
 		
 	turn_count += 1
 	emit_signal("turn_started", current_faction)
