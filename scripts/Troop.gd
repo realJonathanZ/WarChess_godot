@@ -14,7 +14,7 @@ signal troop_clicked(origin: Troop)
 #signal troop_unhovered()
 
 ## Is it moved?
-var moved: bool = false
+var unit_has_moved_this_turn: bool = false
 
 var faction: TurnManager.Faction
 
@@ -113,7 +113,7 @@ func is_alive() -> bool:
 #emitted when any input happens with the mouse clicking inside the troop's area2D
 func _on_click_detection_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-		if self.moved:
+		if self.unit_has_moved_this_turn:
 			#print("Hey, don't bother clicking on a troop that has already moved this turn!! Signal won't be emitted")
 			return
 		else:

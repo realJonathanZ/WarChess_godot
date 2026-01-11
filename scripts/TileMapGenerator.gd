@@ -18,7 +18,7 @@ class_name TileMapGenerator
 var hover_ui_normal: Color = Color("006f006e")
 var hover_ui_attack: Color = Color("6f00006e")
 
-@export var session: MoveAndAttackSession
+@onready var move_and_attack_session: MoveAndAttackSession = $MoveAndAttackSession
 
 
 ##Quick reference to TileSet coordinates.
@@ -38,8 +38,17 @@ var terrain_dict = {
 
 
 func _ready():
+	## Check the session is binding as a child of the node where this scirpt is bindig to
+	if move_and_attack_session == null:
+		move_and_attack_session = $MoveAndAttackSession
+	## if it's still null after attempting to bind..
+	if move_and_attack_session == null:
+		push_error("MoveAndAttackSession not found! <- error from _ready() in TileMapGenerator.gd")
+	
+	
 	## Godot does not support to call _init() in _ready(), it will crash
-	set_up_map(map_width, map_heigth) ## using set_up_map() declared inside super class, instead...
+	## set the map on
+	set_up_map(map_width, map_heigth) ## using set_up_map() declared inside super class(TileMapManager), instead...
 	
 	## The manager starts with default BLUE_TEAM to be the first faction in round#1
 	turn_manager.start_game(TurnManager.Faction.BLUE_TEAM)
@@ -153,7 +162,6 @@ func _on_troop_selected(origin: Troop):
 	# origin is passed to start_session(), to be a "selected_troop" in the session
 	
 	#print("clicked on troop at ", origin.grid_position)
-
 	## If the faction of this troop does not match the faction from the turn manager... 
 	if origin.faction != turn_manager.current_faction:
 		print("It's currently ",
@@ -162,9 +170,17 @@ func _on_troop_selected(origin: Troop):
 		origin.troop_name)
 		return
 		
+	## NEVER start a new session when the session is already active
+	## To entry this part, for example, the user might click on the ally troop B when it is in troopA's session.
+	## And we do not want start new session for troop B, while the remain logic is handled in session script
+	if move_and_attack_session.active:
+		print("ignoring the troop click since the move and attack session is already active. <- _on_troop_selected() in Generator script")
+		return
+		
 	# otherwise, the fraction matches the turn that told by turn manager
 	# session starts
-	session.start_session(origin, self)
+	move_and_attack_session.start_session(origin, self)
+	return
 	
 
 

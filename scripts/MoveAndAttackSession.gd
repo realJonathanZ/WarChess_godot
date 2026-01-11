@@ -6,21 +6,19 @@ class_name MoveAndAttackSession
 ## how the plan-lines within a session can be
 @onready var path_line: Line2D = $PathLine
 
-var selected_troop: Troop # The troop currently moving in the session
+var selected_troop: Troop # The troop currently being selected in the session
 var tilemap: TileMapManager # Reference to the TileMapGenerator
 var move_stack: Array[Vector2i] = [] # stack of vector2i points that plotting the path
 
 var troop_container: Node2D = null # This will be updated to the reference to TroopContainer node in start_session()
 
 # list of grid positions (Vector2i) within this troop's attack range
-var attackable_cells: Array[Vector2i] = [] # Will be fulfilled in helper function later
+var attackable_cells: Array[Vector2i] = [] 
 
+## Is this session active? (will be set to ture everytime start_session() is run)
 var active: bool = false
 
-##Both of these are set by TileMapGenerator
-## TODO: maybe need to edit a bit on var tile_occupied? not used in this script
-var tile_occupied: bool = false #If the mouse is blocked by a troop (used for attacks and making sure that a space is occupied).
-## This troop is currently in use by function _confirm_attack() in this script. It is class var
+## This var is currently in use by function _confirm_attack() in this script. 
 var target_troop: Troop #The troop being attacked.
 
 # The cost of move for this moement session, should eventually become
@@ -72,7 +70,7 @@ func _input(event: InputEvent) -> void:
 	if active:
 		if selected_troop == null or tilemap == null:
 			print("The input event is received to MoveAndAttackSession.gd - (CanvasLayer)
-			, but something wrong happens inside _unhandled_input()")
+			, but something wrong happens inside MoveAndAttckSession.gd -> _input()")
 			return
 			
 		if event is InputEventMouseMotion:
@@ -84,8 +82,6 @@ func _input(event: InputEvent) -> void:
 			var mouse_pos = get_viewport().get_camera_2d().get_global_mouse_position()
 			var hovered_tile = tilemap.local_to_map(mouse_pos)
 			_update_stack(hovered_tile)
-			if tile_occupied:
-				pass
 			
 		elif event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
@@ -301,7 +297,7 @@ func _confirm_move() -> void:
 	var target_tile = move_stack.back()
 	selected_troop.grid_position = target_tile
 	selected_troop.position = tilemap.map_to_local(target_tile)
-	selected_troop.moved = true   ## intended to make it to false gain when it's starting next turn.
+	selected_troop.unit_has_moved_this_turn = true   ## intended to make it to false gain when it's starting next turn.
 	## TODO: handle the move-animation here??
 	
 	self.has_moved_in_session = true
@@ -361,7 +357,7 @@ func _confirm_attack(atarget_troop: Troop) -> void:
 	atarget_troop.take_dmg(10, selected_troop.troop_type) # temporary dmg #TODO: modify troop.gd to include the troop dmg attr
 	
 	## This troop is moved for this turn
-	selected_troop.moved = true
+	selected_troop.unit_has_moved_this_turn = true
 	
 	## This session, this flag, should be changed!
 	self.has_attacked_in_session = true
@@ -380,8 +376,8 @@ func _cancel_session() -> void:
 
 
 func _cleanup_session() -> void:
-	active = false
-	visible = false
+	self.active = false
+	self.visible = false
 	
 	print("clean up for the session")
 	#queue_free()

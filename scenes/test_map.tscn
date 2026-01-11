@@ -406,12 +406,11 @@ z_index = 5
 position = Vector2(170, 91)
 zoom = Vector2(3.185, 3.185)
 
-[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container", "hover_ui", "session")]
+[node name="TileMapLayer18x18" type="TileMapLayer" parent="." node_paths=PackedStringArray("troop_container", "hover_ui")]
 tile_set = SubResource("TileSet_p21b5")
 script = ExtResource("2_y4kt2")
 troop_container = NodePath("../TroopContainer")
 hover_ui = NodePath("Control")
-session = NodePath("MoveAndAttackSession")
 map_width = 10
 map_heigth = 10
 
