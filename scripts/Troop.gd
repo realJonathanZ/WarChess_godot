@@ -8,8 +8,10 @@ class_name Troop
 
 ## A signal for when the mouse clicks on this troop
 signal troop_clicked(origin: Troop)
-signal troop_hovered(origin: Troop)
-signal troop_unhovered()
+
+##NOTE: unused Signal(s)
+#signal troop_hovered(origin: Troop)
+#signal troop_unhovered()
 
 ## Is it moved?
 var moved: bool = false
