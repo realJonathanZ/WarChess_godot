@@ -16,16 +16,16 @@ signal turn_ended(faction)
 ## and let the other scripts/nodes get notified about the turn change from a turn manager reference that is built in,
 ## theoretically
 
-enum TurnFaction {
+enum Faction {
 	RED_TEAM,
 	BLUE_TEAM
 }
 
 # hard coded first turn to BLUE_TEAM
-var current_faction: TurnFaction = TurnFaction.BLUE_TEAM
+var current_faction: Faction = Faction.BLUE_TEAM
 var turn_count: int = 1 # The first turn
 
-func start_game(starting_faction: TurnFaction = TurnFaction.BLUE_TEAM):
+func start_game(starting_faction: Faction = Faction.BLUE_TEAM):
 	current_faction = starting_faction
 	turn_count = 1
 	emit_signal("turn_started", current_faction)
@@ -35,12 +35,19 @@ func end_turn():
 	_turn_plus_plus()
 	
 func _turn_plus_plus():
-	if current_faction == TurnFaction.BLUE_TEAM:
-		current_faction = TurnFaction.RED_TEAM
-	elif current_faction == TurnFaction.RED_TEAM:
-		current_faction = TurnFaction.BLUE_TEAM
+	if current_faction == Faction.BLUE_TEAM:
+		current_faction = Faction.RED_TEAM
+	elif current_faction == Faction.RED_TEAM:
+		current_faction = Faction.BLUE_TEAM
 	else:
 		print("Error: something went wrong in TurnManager.gd -> _advance_turn()")
 		
 	turn_count += 1
 	emit_signal("turn_started", current_faction)
+	
+func faction_to_string(faction: Faction) -> String:
+	## NOTE: If, directly access <turn_manager.current_faction> from other scirpt, we will get either 0 or 1
+	## w.r.t the factions are int under the hood
+	## There are 2 types of arrays can be returned via Faction.keys() and Faction.value(),
+	## separately  
+	return Faction.keys()[faction]

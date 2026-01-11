@@ -14,10 +14,8 @@ signal troop_unhovered()
 ## Is it moved?
 var moved: bool = false
 
-##Note: suppose we have var current_turn_faction = Troop.factions.BLUE_TEAM
-##this variable's datatype is int under the hood
-enum factions {RED_TEAM, BLUE_TEAM} #List of factions, might change names later on.
-var faction: factions #this troop's faction.
+var faction: TurnManager.Faction
+
 
 ## The customized/generated name of this troop. It is different from self.troop_type
 @export var troop_name: String
@@ -46,9 +44,9 @@ func _update_faction_color() -> void:
 	if sprite == null:
 		return
 	match faction:
-		factions.RED_TEAM:
+		TurnManager.Faction.RED_TEAM:
 			sprite.modulate = Color(1, 0.4, 0.4) # R big, G middle, B middle 
-		factions.BLUE_TEAM:
+		TurnManager.Faction.BLUE_TEAM:
 			sprite.modulate = Color(0.4, 0.4, 1) # R middle, G middle, B big
 
 ## =======Mthods===
@@ -114,10 +112,10 @@ func is_alive() -> bool:
 func _on_click_detection_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 		if self.moved:
-			print("Hey, don't bother clicking on a troop that has already moved this turn!! Signal won't be emitted")
+			#print("Hey, don't bother clicking on a troop that has already moved this turn!! Signal won't be emitted")
 			return
 		else:
-			print("Signal emitted : _on_click_detection_input_event() for", troop_name)
+			#print("Signal emitted : _on_click_detection_input_event() for", troop_name)
 			emit_signal("troop_clicked", self)
 
 

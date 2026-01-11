@@ -8,6 +8,8 @@ extends TileMapManager
 
 class_name TileMapGenerator
 
+@onready var turn_manager: TurnManager = $"../TurnManager"
+
 
 @export var troop_container: Node2D
 
@@ -38,6 +40,9 @@ var terrain_dict = {
 func _ready():
 	## Godot does not support to call _init() in _ready(), it will crash
 	set_up_map(map_width, map_heigth) ## using set_up_map() declared inside super class, instead...
+	
+	## The manager starts with default BLUE_TEAM to be the first faction in round#1
+	turn_manager.start_game(TurnManager.Faction.BLUE_TEAM)
 	
 	#debug
 	print("-----From TileMapLayer 18x18-----")
@@ -109,10 +114,10 @@ func spawn_test_troops():
 	var troop4: Troop = troop_scene.instantiate()
 	troop4.set_data("Missile-Vehicle", 200, 6, 4, 7, 5, Vector2i(5,5), "Tank", {})
 	
-	troop1.faction = Troop.factions.RED_TEAM
-	troop2.faction = Troop.factions.RED_TEAM
-	troop3.faction = Troop.factions.BLUE_TEAM
-	troop4.faction = Troop.factions.BLUE_TEAM
+	troop1.faction = TurnManager.Faction.RED_TEAM
+	troop2.faction = TurnManager.Faction.RED_TEAM
+	troop3.faction = TurnManager.Faction.BLUE_TEAM
+	troop4.faction = TurnManager.Faction.BLUE_TEAM
 	
 	
 	# add nodes to the troop container
@@ -147,18 +152,17 @@ func connect_troop_signals(troop: Troop):
 func _on_troop_selected(origin: Troop):
 	# origin is passed to start_session(), to be a "selected_troop" in the session
 	
-	#debug
-	print("clicked on troop at ", origin.grid_position)
-	# now, we pretend that it's BLUE_TEAM's turn
-	# So, clicking on red troop do trigger call back function _on_troop_selected()
-	# But since we are blue team, we cannot operate on red troops!
-	# Therefore, clicking on red troop won't start session
-	var current_turn_faction = Troop.factions.BLUE_TEAM
-	if origin.faction != current_turn_faction:
-		print("It's currently BLUE_TEAM's turn — cannot select enemy troop:", origin.troop_name)
+	#print("clicked on troop at ", origin.grid_position)
+
+	## If the faction of this troop does not match the faction from the turn manager... 
+	if origin.faction != turn_manager.current_faction:
+		print("It's currently ",
+		turn_manager.faction_to_string(turn_manager.current_faction),
+		"'s turn — cannot select enemy troop:",
+		origin.troop_name)
 		return
 		
-	# otherwise, the fraction matches the current_turn_faction
+	# otherwise, the fraction matches the turn that told by turn manager
 	# session starts
 	session.start_session(origin, self)
 	
