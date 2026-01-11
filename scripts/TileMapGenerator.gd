@@ -44,7 +44,10 @@ func _ready():
 	## if it's still null after attempting to bind..
 	if move_and_attack_session == null:
 		push_error("MoveAndAttackSession not found! <- error from _ready() in TileMapGenerator.gd")
-	
+		
+	## Connecting signals from the turn manager
+	turn_manager.turn_started.connect(_on_turn_started)
+	turn_manager.turn_ended.connect(_on_turn_ended)
 	
 	## Godot does not support to call _init() in _ready(), it will crash
 	## set the map on
@@ -181,6 +184,33 @@ func _on_troop_selected(origin: Troop):
 	# session starts
 	move_and_attack_session.start_session(origin, self)
 	return
+	
+## -----
+## Turn Logic handles
+## Signal received from TurnManager.gd, connected in self._ready()
+## The signal received is with a TurnManager.Faction indicating the current turn faction
+## -----
+
+func _on_turn_started(afaction: TurnManager.Faction) -> void:
+	print("Turn started for ", turn_manager.faction_to_string(afaction))
+	## reset the "has-moved" attri to false at the beginning of each turn
+	for troop in troop_container.get_children():
+		if troop.faction == afaction:
+			troop.unit_has_moved_this_turn = false
+			
+func _on_turn_ended(afaction: TurnManager.Faction) -> void:
+	print("Turn ended for ", turn_manager.faction_to_string(afaction))
+	## Since unit.has-moved is reset at the start of each turn
+	## might not needed to set them again at the turn end
+	
+	## At the end of one turn, "kill" the session
+	## not actually kill, just making it not active
+	## I think it's ok, at this time, even without the following code
+	## since session will always ended, and it's session scripts duty??
+	## but in case..
+	if move_and_attack_session.active:
+		move_and_attack_session._cancel_session()
+		
 	
 
 
