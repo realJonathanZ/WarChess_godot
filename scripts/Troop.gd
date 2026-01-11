@@ -121,9 +121,11 @@ func _on_click_detection_input_event(_viewport: Node, event: InputEvent, _shape_
 			emit_signal("troop_clicked", self)
 
 
-func _on_click_detection_mouse_entered() -> void:
-	emit_signal("troop_hovered", self)
+## NOTE: the following funcs are not used in the lastest version
 
-
-func _on_click_detection_mouse_exited() -> void:
-	emit_signal("troop_unhovered")
+#func _on_click_detection_mouse_entered() -> void:
+	#emit_signal("troop_hovered", self)
+#
+#
+#func _on_click_detection_mouse_exited() -> void:
+	#emit_signal("troop_unhovered")

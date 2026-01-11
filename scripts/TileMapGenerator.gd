@@ -137,8 +137,8 @@ func spawn_test_troops():
 func connect_troop_signals(troop: Troop):
 	#When the "troop_clicked" signal is emitted from the troop scene, run the troop_selected() function
 	troop.troop_clicked.connect(_on_troop_selected)
-	troop.troop_hovered.connect(_on_troop_hovered)
-	troop.troop_unhovered.connect(_on_troop_unhovered)
+	#troop.troop_hovered.connect(_on_troop_hovered)
+	#troop.troop_unhovered.connect(_on_troop_unhovered)
 
 
 ## This function is called when a troop is clicked on.
@@ -163,24 +163,33 @@ func _on_troop_selected(origin: Troop):
 	session.start_session(origin, self)
 	
 
-func _on_troop_hovered(origin: Troop):
-	#If the player hovers over a troop while a movement sesssion is active then give it the option to attack that troop.
-	if session.active:
-		session.tile_occupied = true
-		session.target_troop = origin
-		
-		#set hover ui to red
-		var hover_ui_c_rect = hover_ui.get_child(0)
-		if hover_ui_c_rect is ColorRect:
-			hover_ui_c_rect.color = hover_ui_attack
 
 
-func _on_troop_unhovered():
-	if session.active:
-		session.tile_occupied = false
-		session.target_troop = null
-		
-	#set hover ui to green again.
-	var hover_ui_c_rect = hover_ui.get_child(0)
-	if hover_ui_c_rect is ColorRect:
-		hover_ui_c_rect.color = hover_ui_normal
+
+
+
+
+
+## NOTE: The functions below are no longer used in the latest version.
+
+#func _on_troop_hovered(origin: Troop):
+	##If the player hovers over a troop while a movement sesssion is active then give it the option to attack that troop.
+	#if session.active:
+		#session.tile_occupied = true
+		#session.target_troop = origin
+		#
+		##set hover ui to red
+		#var hover_ui_c_rect = hover_ui.get_child(0)
+		#if hover_ui_c_rect is ColorRect:
+			#hover_ui_c_rect.color = hover_ui_attack
+#
+#
+#func _on_troop_unhovered():
+	#if session.active:
+		#session.tile_occupied = false
+		#session.target_troop = null
+		#
+	##set hover ui to green again.
+	#var hover_ui_c_rect = hover_ui.get_child(0)
+	#if hover_ui_c_rect is ColorRect:
+		#hover_ui_c_rect.color = hover_ui_normal

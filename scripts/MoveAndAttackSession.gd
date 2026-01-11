@@ -20,7 +20,6 @@ var active: bool = false
 ##Both of these are set by TileMapGenerator
 ## TODO: maybe need to edit a bit on var tile_occupied? not used in this script
 var tile_occupied: bool = false #If the mouse is blocked by a troop (used for attacks and making sure that a space is occupied).
-
 ## This troop is currently in use by function _confirm_attack() in this script. It is class var
 var target_troop: Troop #The troop being attacked.
 
@@ -349,17 +348,17 @@ func _calculate_attack_range() -> Array[Vector2i]:
 # =====
 
 ## When this function is called, selected troop will deal dmg to target troop
-## @para target_troop: the target troop instance "being attacked"
-func _confirm_attack(target_troop: Troop) -> void:
-	if selected_troop == null or target_troop == null:
+## @para atarget_troop: the target troop instance "being attacked"
+func _confirm_attack(atarget_troop: Troop) -> void:
+	if selected_troop == null or atarget_troop == null:
 		print("Attack error: missing references. in _confirm_attack()")
 		return
 		
-	print(selected_troop.troop_name, "attacks", target_troop.troop_name)
+	print(selected_troop.troop_name, "attacks", atarget_troop.troop_name)
 	print("selected troop on grid:", selected_troop.grid_position)
-	print("target troop on grid:", target_troop.grid_position)
+	print("target troop on grid:", atarget_troop.grid_position)
 	
-	target_troop.take_dmg(10, selected_troop.troop_type) # temporary dmg #TODO: modify troop.gd to include the troop dmg attr
+	atarget_troop.take_dmg(10, selected_troop.troop_type) # temporary dmg #TODO: modify troop.gd to include the troop dmg attr
 	
 	## This troop is moved for this turn
 	selected_troop.moved = true
