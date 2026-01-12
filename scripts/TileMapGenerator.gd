@@ -192,9 +192,20 @@ func _on_turn_ended(afaction: TurnManager.Faction) -> void:
 	## but in case..
 	if move_and_attack_session.active:
 		move_and_attack_session._cancel_session()
-		
 	
-
+## When unconsumed event of hitting enter key passing down.. try to end the turn	
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("end_turn"):
+		_attempt_end_turn()
+	
+## end the turn. cancel active move-and-attack session, then tell turn manager to end_turn()	
+func _attempt_end_turn() -> void:
+	# cancel session, if active
+	if move_and_attack_session.active:
+		print("Ending turn -- The current active session will be immediatly canceled")
+		move_and_attack_session._cancel_session()
+		
+	turn_manager.end_turn()
 
 
 
