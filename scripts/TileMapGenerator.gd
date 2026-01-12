@@ -28,9 +28,7 @@ var terrain_dict = {
 	"Sea": Vector2(4,9)
 }
 
-##Exporting makes it so you can edit it in the editor (on the right side of screen)
-##This makes it so we can reuse this script for any size as long as we set the two vars below.
-@export_category("Dimensions")
+
 
 @export var map_width: int = 0
 @export var map_heigth: int = 0
@@ -81,24 +79,6 @@ func _ready():
 	spawn_test_troops()
 
 
-#Called everytime any input happens.
-func _input(event: InputEvent) -> void:
-	#If the event is the mouse moving
-	if event is InputEventMouseMotion:
-		var hovered_tile = local_to_map(get_global_mouse_position())
-		
-		#debug
-		#print("Mouse is on ", hovered_tile)
-		
-		#move the hover ui to where the mosue is and align it with tiles.
-		hover_ui.position = map_to_local(hovered_tile)
-		
-		#NOTE: the event is not .consumed() or being set_input_as_handled()
-		# Thus, the event continues travelling down the input chain.
-		# Input chain, when input occurs:
-		# 1. It’s sent first to focused UI elements.
-		# 2. If not consumed, it’s passed to nodes with _input().
-		# 3. Finally, if still unhandled, it goes to nodes with _unhandled_input().
 
 
 func spawn_test_troops():	
@@ -164,6 +144,13 @@ func connect_troop_signals(troop: Troop):
 func _on_troop_selected(origin: Troop):
 	# origin is passed to start_session(), to be a "selected_troop" in the session
 	
+	## NEVER start a new session when the session is already active
+	## To entry this part, for example, the user might click on the ally troop B when it is in troopA's session.
+	## And we do not want start new session for troop B, while the remain logic is handled in session script
+	if move_and_attack_session.active:
+		print("ignoring the troop click since the move and attack session is already active. <- _on_troop_selected() in Generator script")
+		return
+		
 	#print("clicked on troop at ", origin.grid_position)
 	## If the faction of this troop does not match the faction from the turn manager... 
 	if origin.faction != turn_manager.current_faction:
@@ -173,12 +160,7 @@ func _on_troop_selected(origin: Troop):
 		origin.troop_name)
 		return
 		
-	## NEVER start a new session when the session is already active
-	## To entry this part, for example, the user might click on the ally troop B when it is in troopA's session.
-	## And we do not want start new session for troop B, while the remain logic is handled in session script
-	if move_and_attack_session.active:
-		print("ignoring the troop click since the move and attack session is already active. <- _on_troop_selected() in Generator script")
-		return
+
 		
 	# otherwise, the fraction matches the turn that told by turn manager
 	# session starts
@@ -221,6 +203,28 @@ func _on_turn_ended(afaction: TurnManager.Faction) -> void:
 
 
 ## NOTE: The functions below are no longer used in the latest version.
+
+##Called everytime any input happens.
+#func _input(event: InputEvent) -> void:
+	##If the event is the mouse moving
+	#if event is InputEventMouseMotion:
+		#var hovered_tile = local_to_map(get_global_mouse_position())
+		#
+		##debug
+		##print("Mouse is on ", hovered_tile)
+		#
+		##move the hover ui to where the mosue is and align it with tiles.
+		#hover_ui.position = map_to_local(hovered_tile)
+		#
+		##NOTE: the event is not .consumed() or being set_input_as_handled()
+		## Thus, the event continues travelling down the input chain.
+		## Input chain, when input occurs:
+		## 1. It’s sent first to focused UI elements.
+		## 2. If not consumed, it’s passed to nodes with _input().
+		## 3. Finally, if still unhandled, it goes to nodes with _unhandled_input().
+
+
+
 
 #func _on_troop_hovered(origin: Troop):
 	##If the player hovers over a troop while a movement sesssion is active then give it the option to attack that troop.
