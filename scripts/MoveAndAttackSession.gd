@@ -2,13 +2,15 @@ extends Node2D
 
 class_name MoveAndAttackSession
 
-
+######################################################################################
 ##NOTE:changing parts
 @onready var maas_view: MoveAndAttackSessionView = $MAAS_view
 @onready var path_line: Line2D = $MAAS_view/PathLine
 
 ##NOTE: changing parts
-var model : MoveAndAttackSessionModel = MoveAndAttackSessionModel.new()
+var mass_model : MoveAndAttackSessionModel = MoveAndAttackSessionModel.new()
+#######################################################################################
+
 
 var selected_troop: Troop # The troop currently being selected in the session
 var tilemap: TileMapManager # Reference to the TileMapGenerator
@@ -36,6 +38,15 @@ var has_moved_in_session:bool
 
 ## Called to start the session
 func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
+	################################################################################
+	#NOTE: changing parts
+	mass_model.move_path_changed.connect(maas_view.draw_move_path)
+	mass_model.session_ended.connect(maas_view.clear)
+	
+	## Have to tell view class the tilemap ref cuz view cannot and wont search in tree
+	maas_view.tilemap = tilemap_ref
+	##################################################################################
+	
 	selected_troop = troop
 	tilemap = tilemap_ref
 	
