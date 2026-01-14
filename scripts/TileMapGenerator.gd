@@ -174,7 +174,9 @@ func _on_troop_selected(origin: Troop):
 ## -----
 
 func _on_turn_started(afaction: TurnManager.Faction) -> void:
-	print("Turn started for ", turn_manager.faction_to_string(afaction))
+	print("Turn started for ", 
+	turn_manager.faction_to_string(afaction), 
+	". It is the ", turn_manager.turn_count, "-th turn")
 	## reset the "has-moved" attri to false at the beginning of each turn
 	for troop in troop_container.get_children():
 		if troop.faction == afaction:
