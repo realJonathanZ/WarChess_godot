@@ -4,7 +4,9 @@ class_name MoveAndAttackSession
 
 ## The path line is supposed to instruct how the animation is done on the troop, and
 ## how the plan-lines within a session can be
-@onready var path_line: Line2D = $PathLine
+@onready var maas_view: MoveAndAttackSessionView = $MAAS_view
+@onready var path_line: Line2D = $MAAS_view/PathLine
+
 
 var selected_troop: Troop # The troop currently being selected in the session
 var tilemap: TileMapManager # Reference to the TileMapGenerator
