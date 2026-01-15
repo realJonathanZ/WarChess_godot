@@ -47,6 +47,7 @@ func _ready() -> void:
 ## called to start the session
 func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
 
+	#print("session started -> start_session()")
 	##########NOTE: changing pART ####################################################
 	## Have to tell view class the tilemap ref cuz view cannot and wont search in tree
 	maas_view.tilemap = tilemap_ref

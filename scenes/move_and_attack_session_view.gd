@@ -7,6 +7,8 @@ class_name MoveAndAttackSessionView
 
 ## giving dots to the Line2D child and draw it.
 func draw_move_path(path: Array[Vector2i]) -> void:
+	if tilemap == null:
+		print("Error: no tilemap reference found when executing move_and_attack_session_view.gd -- draw_move_path")
 	path_line.clear_points()
 	for cords in path:
 		path_line.add_point(tilemap.map_to_local(cords))
