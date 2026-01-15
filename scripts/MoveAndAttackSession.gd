@@ -8,7 +8,7 @@ class_name MoveAndAttackSession
 @onready var path_line: Line2D = $MAAS_view/PathLine
 
 ##NOTE: changing parts
-var mass_model : MoveAndAttackSessionModel = MoveAndAttackSessionModel.new()
+var maas_model : MoveAndAttackSessionModel = MoveAndAttackSessionModel.new()
 #######################################################################################
 
 
@@ -37,8 +37,8 @@ var has_moved_in_session:bool
 
 ##################NOTE: changing part####
 func _ready() -> void:
-	mass_model.move_path_changed.connect(maas_view.draw_move_path)
-	mass_model.session_ended.connect(maas_view.clear)
+	maas_model.move_path_changed.connect(maas_view.draw_move_path)
+	maas_model.session_ended.connect(maas_view.clear)
 #########################################
 
 ## called to start the session
