@@ -35,11 +35,6 @@ var move_cost: int
 ##################NOTE: changing part####
 func _ready() -> void:
 	maas_model.move_path_changed.connect(maas_view.draw_move_path)
-	maas_model.session_ended.connect(maas_view.clear)
-	
-	## The connection here will LATER pass any troop of any kind of troop
-	## Although the connection or model does not know anything about teh current - none reference of troop
-	## it is fine. The connection works later.
 	maas_model.session_started.connect(maas_view._on_session_started)
 	maas_model.session_ended.connect(maas_view._on_session_ended)
 #########################################

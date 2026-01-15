@@ -19,6 +19,8 @@ var unit_has_moved_this_turn: bool = false
 ## Is it attacked?
 var unit_has_attacked_this_turn: bool = false
 
+## The enum Faction can be checked in turn manager script
+## Turn manager is not god class or auto-load
 var faction: TurnManager.Faction
 
 
