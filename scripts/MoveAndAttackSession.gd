@@ -31,9 +31,6 @@ var target_troop: Troop #The troop being attacked.
 # the sum of all block_mobilities for the tiles
 var move_cost: int
 
-# The flags indicating if the selected troop in this session has attacked/ has moved, respectively
-var has_attacked_in_session:bool
-var has_moved_in_session:bool
 
 ##################NOTE: changing part####
 func _ready() -> void:
@@ -69,10 +66,7 @@ func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
 	active = true
 	visible = true
 	
-	# reset per-session state flags
-	# these flags are used in move_and_attack cotrol flows, that this session controls
-	self.has_attacked_in_session = false
-	self.has_moved_in_session = false
+
 	
 	move_stack.clear()
 	move_stack.append(troop.grid_position) ## the orginal starting tile-index of the troop
@@ -99,7 +93,7 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventMouseMotion:
 			# if the flag shows the unit has done the move in this session...
 			# Don't need to track the preview path! DOn't need to draw lines! Don't need to _update_stack() either
-			if has_moved_in_session:
+			if selected_troop.unit_has_moved_this_turn:
 				return  # stop drawing the path after troop has moved
 				
 			var mouse_pos = get_viewport().get_camera_2d().get_global_mouse_position()
@@ -117,7 +111,7 @@ func _handle_left_click() -> void:
 	var mouse_pos = get_viewport().get_camera_2d().get_global_mouse_position()
 	var clicked_cell = tilemap.local_to_map(mouse_pos) # this var is a vector2i e.g. (4.3)
 	
-	if self.has_attacked_in_session:
+	if selected_troop.unit_has_attacked_this_turn:
 		print("This troop already attacked. Cannot act further this turn.")
 		return
 	
@@ -148,7 +142,7 @@ func _handle_left_click() -> void:
 		print("Error: something is wrong inside _handle_left_click()")
 		return
 	
-	if self.has_moved_in_session:
+	if selected_troop.unit_has_moved_this_turn:
 		print("Already moved — you can only attack now.")
 	else:
 		_confirm_move()
@@ -323,7 +317,6 @@ func _confirm_move() -> void:
 	selected_troop.unit_has_moved_this_turn = true   ## intended to make it to false gain when it's starting next turn.
 	## TODO: handle the move-animation here??
 	
-	self.has_moved_in_session = true
 
 	# This line is used for makeing area2D unreactive to input events for an amount of time(unused)
 	#selected_troop.get_node("ClickDetection").input_pickable = false 
@@ -382,8 +375,6 @@ func _confirm_attack(atarget_troop: Troop) -> void:
 	## This troop is moved for this turn
 	selected_troop.unit_has_moved_this_turn = true
 	
-	## This session, this flag, should be changed!
-	self.has_attacked_in_session = true
 	
 	_cleanup_session() 
 	

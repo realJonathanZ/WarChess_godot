@@ -16,6 +16,9 @@ signal troop_clicked(origin: Troop)
 ## Is it moved?
 var unit_has_moved_this_turn: bool = false
 
+## Is it attacked?
+var unit_has_attacked_this_turn: bool = false
+
 var faction: TurnManager.Faction
 
 

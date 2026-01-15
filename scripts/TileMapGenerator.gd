@@ -181,6 +181,7 @@ func _on_turn_started(afaction: TurnManager.Faction) -> void:
 	for troop in troop_container.get_children():
 		if troop.faction == afaction:
 			troop.unit_has_moved_this_turn = false
+			troop.unit_has_attacked_this_turn = false
 			
 func _on_turn_ended(afaction: TurnManager.Faction) -> void:
 	print("Turn ended for ", turn_manager.faction_to_string(afaction))
