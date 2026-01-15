@@ -35,14 +35,16 @@ var move_cost: int
 var has_attacked_in_session:bool
 var has_moved_in_session:bool
 
-
-## Called to start the session
-func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
-	################################################################################
-	#NOTE: changing parts
+##################NOTE: changing part####
+func _ready() -> void:
 	mass_model.move_path_changed.connect(maas_view.draw_move_path)
 	mass_model.session_ended.connect(maas_view.clear)
-	
+#########################################
+
+## called to start the session
+func start_session(troop: Troop, tilemap_ref: TileMapManager) -> void:
+
+	##########NOTE: changing pART ####################################################
 	## Have to tell view class the tilemap ref cuz view cannot and wont search in tree
 	maas_view.tilemap = tilemap_ref
 	##################################################################################
